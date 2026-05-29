@@ -9,7 +9,6 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
 
-DAY_ORDER = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 DAY_INDEX = {
     "mon": 0,
     "monday": 0,
@@ -164,11 +163,11 @@ def is_restaurant_open(hours, timestamp):
 
 def get_open_restaurants(timestamp):
     dt = parse_datetime(timestamp)
-    open_restaurants = []
-    for restaurant in load_restaurants():
-        if is_restaurant_open(restaurant["hours"], dt):
-            open_restaurants.append(restaurant["name"])
-    return open_restaurants
+    return [
+        restaurant["name"]
+        for restaurant in load_restaurants()
+        if is_restaurant_open(restaurant["hours"], dt)
+    ]
 
 
 @require_GET

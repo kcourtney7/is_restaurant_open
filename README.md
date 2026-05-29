@@ -1,7 +1,6 @@
 # is_restaurant_open
 API that takes a datetime string and returns a list of restaurant names which are open on that date at that time.
 
-
 Problem Statement:
 
 Python is preferred, but if you feel unable to complete it using python, use whatever programming language you feel most comfortable in.
@@ -16,3 +15,38 @@ Assumptions:
 Want bonus points? Here are a few things we would really like to see:
 
     A Dockerfile and the ability to run this in a container
+
+## Running the program
+
+Create and activate the virtual environment, then install dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Run the Django development server:
+
+```bash
+python manage.py runserver
+```
+
+Query the endpoint with a timestamp:
+
+```bash
+curl "http://127.0.0.1:8000/restaurants/?datetime=2024-01-15%2012:00:00"
+```
+
+Run the test suite:
+
+```bash
+python manage.py test
+```
+
+To deactivate the virtual environment when you are done:
+
+```bash
+deactivate
+```
+
