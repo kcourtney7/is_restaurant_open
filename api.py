@@ -11,22 +11,12 @@ from django.views.decorators.http import require_GET
 
 DAY_INDEX = {
     "mon": 0,
-    "monday": 0,
     "tue": 1,
-    "tues": 1,
-    "tuesday": 1,
     "wed": 2,
-    "wednesday": 2,
     "thu": 3,
-    "thur": 3,
-    "thurs": 3,
-    "thursday": 3,
     "fri": 4,
-    "friday": 4,
     "sat": 5,
-    "saturday": 5,
     "sun": 6,
-    "sunday": 6,
 }
 TIME_RE = re.compile(r"(?P<hour>\d{1,2})(?::(?P<minute>\d{2}))?\s*(?P<ampm>am|pm)", re.IGNORECASE)
 
@@ -55,23 +45,6 @@ def load_restaurants():
 def parse_datetime(value):
     if isinstance(value, datetime):
         parsed = value
-    elif isinstance(value, str):
-        text = value.strip()
-        if not text:
-            raise ValueError("datetime string is required")
-        if text.endswith("Z") or text.endswith("z"):
-            text = text[:-1] + "+00:00"
-        try:
-            parsed = datetime.fromisoformat(text)
-        except ValueError:
-            for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"]:
-                try:
-                    parsed = datetime.strptime(text, fmt)
-                    break
-                except ValueError:
-                    parsed = None
-            if parsed is None:
-                raise ValueError(f"Unrecognized datetime format: {value}")
     else:
         raise TypeError("timestamp must be a datetime or string")
 
@@ -87,7 +60,7 @@ def normalize_day_token(token):
     return DAY_INDEX[cleaned]
 
 
-def expand_day_range(start_token, end_token):
+def open_after_midnight(start_token, end_token):
     start_day = normalize_day_token(start_token)
     end_day = normalize_day_token(end_token)
     if start_day <= end_day:
@@ -138,7 +111,7 @@ def parse_hours(hours):
         for token in day_tokens:
             if "-" in token:
                 start_token, end_token = [piece.strip() for piece in token.split("-", 1)]
-                day_indices = expand_day_range(start_token, end_token)
+                day_indices = open_after_midnight(start_token, end_token)
             else:
                 day_indices = [normalize_day_token(token)]
             for day_index in day_indices:
@@ -163,11 +136,11 @@ def is_restaurant_open(hours, timestamp):
 
 def get_open_restaurants(timestamp):
     dt = parse_datetime(timestamp)
-    return [
-        restaurant["name"]
-        for restaurant in load_restaurants()
-        if is_restaurant_open(restaurant["hours"], dt)
-    ]
+    open_restaurants = []
+    for restaurant in load_restaurants():
+        if is_restaurant_open(restaurant["hours"], dt):
+            open_restaurants.append(restaurant["name"])
+    return open_restaurants
 
 
 @require_GET
