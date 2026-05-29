@@ -35,7 +35,7 @@ python manage.py runserver
 Query the endpoint with a timestamp:
 
 ```bash
-curl "http://127.0.0.1:8000/restaurants/?datetime=2024-01-15%2012:00:00"
+curl "http://127.0.0.1:8000/restaurants/?datetime=2026-05-27%2012:00:00"
 ```
 
 Run the test suite:
@@ -48,5 +48,49 @@ To deactivate the virtual environment when you are done:
 
 ```bash
 deactivate
+```
+
+## Docker
+
+If Docker is installed and running, build the image:
+
+```bash
+docker build -t is-restaurant-open .
+```
+
+Start the container in the foreground:
+
+```bash
+docker run --rm -p 8000:8000 is-restaurant-open
+```
+
+If you want to run it in the background, use:
+
+```bash
+docker run -d --name is-restaurant-open -p 8000:8000 is-restaurant-open
+```
+
+Check the running container status:
+
+```bash
+docker ps
+```
+
+View the container logs:
+
+```bash
+docker logs -f is-restaurant-open
+```
+
+Stop the background container:
+
+```bash
+docker stop is-restaurant-open
+```
+
+Query the endpoint from another terminal:
+
+```bash
+curl "http://127.0.0.1:8000/restaurants/?datetime=2026-05-27%2012:00:00"
 ```
 
