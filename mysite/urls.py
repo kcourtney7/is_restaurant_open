@@ -16,4 +16,8 @@ Including another URLconf
 """
 from django.urls import path
 
-urlpatterns = []
+from api import restaurants_open
+
+urlpatterns = [
+    path("restaurants/", restaurants_open, name="restaurants_open"),
+]
